@@ -1,0 +1,45 @@
+@use '../mixins' as *;
+
+//Landing background for Homepage
+.landing-bg{
+    position: absolute;
+    background-image: url('../../../public/images/air-ballon.jpg');
+    background-repeat: repeat;
+    background-attachment: scroll;
+    background-position: 100% 64%; 
+    width: 100%;
+    z-index: -1;
+    border-radius: 0 0 50px 50px;
+}
+
+@include responsive(xs){
+    .landing-bg{
+        height: 800px;
+    }
+}
+
+@include responsive(sm){
+    .landing-bg{
+        height: 850px;
+    }
+}
+
+@include responsive(md){
+    .landing-bg{
+        height: 900px;
+    }
+}
+
+@include responsive(lg){
+    .landing-bg{
+        height: 750px;
+    }
+}
+
+#discover-now{
+    background-image: url('../../../public/images/julian-timmerman-Fn27DlI8bZ8-unsplash.jpg');
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    background-position: center;
+    background-size: cover; 
+}

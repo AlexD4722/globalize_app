@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "537316930511",
+    "project_id": "notificationmessagetest-a0e5b",
+    "storage_bucket": "notificationmessagetest-a0e5b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:537316930511:android:c585a1952b2c0cd69d58ba",
+        "android_client_info": {
+          "package_name": "com.example.booking_platform_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZHrKVxt1n0fcfU7SIeTHP89KBPJoP_as"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

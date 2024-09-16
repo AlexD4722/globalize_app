@@ -1,0 +1,190 @@
+@use '../mixins' as *;
+
+.carousel {
+    --slide-height: 19rem;
+    --slide-spacing-xs: 1rem;
+    --slide-size: 100%;
+    --slide-spacing-md: 1.25rem;
+    --slide-size-md: calc(100% / 3);
+    --slide-spacing-lg: 1.5rem;
+    --slide-size-lg: calc(100% / 4);
+    --slide-spacing-xxl: 1.5rem;
+    --slide-size-xxl: calc(100% / 5);
+}
+
+.carousel_viewport {
+    overflow: hidden;
+}
+
+@include responsive(xs){
+    .carousel_container {
+        backface-visibility: hidden;
+        display: flex;
+        touch-action: pan-y pinch-zoom;
+        margin-left: calc(var(--slide-spacing-xs) * -1);
+    }
+    .carousel_slide {
+        min-width: 0;
+        flex: 0 0 var(--slide-size);
+        padding-left: var(--slide-spacing-xs);
+    }
+
+}
+
+@include responsive(md){
+    .carousel_container {
+      margin-left: calc(var(--slide-spacing-md) * -1);
+    }
+    .carousel_slide {
+        flex: 0 0 var(--slide-size-md);
+        padding-left: var(--slide-spacing-md);
+    }
+}
+
+@include responsive(lg){
+    .carousel_container {
+      margin-left: calc(var(--slide-spacing-lg) * -1);
+    }
+    .carousel_slide {
+        flex: 0 0 var(--slide-size-lg);
+        padding-left: var(--slide-spacing-lg);
+    }
+}
+
+@include responsive(xxl){
+    .carousel_container {
+      margin-left: calc(var(--slide-spacing-xxl) * -1);
+    }
+    .carousel_slide {
+        flex: 0 0 var(--slide-size-xxl);
+        padding-left: var(--slide-spacing-xxl);
+    }
+}
+
+.carousel_controls {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.25rem;
+    margin-top: 1.25rem;
+}
+
+.carousel_dots {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.carousel_dot {
+    -webkit-tap-highlight-color: var(--border-default);
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: transparent;
+    touch-action: manipulation;
+    display: inline-flex;
+    text-decoration: none;
+    cursor: pointer;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+
+    &::after{
+        box-shadow: inset 0 0 0 0.2rem var(--border-default);
+        width: 1.25rem;
+        height: 1.25rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        content: '';
+    }
+}
+.carousel_dot-selected {
+    &::after{
+        box-shadow: inset 0 0 0 0.2rem var(--theme-color);
+    }
+}
+  
+
+.carousel_buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
+    align-items: center;
+  }
+.carousel_button {
+    -webkit-tap-highlight-color: var(--border-default);
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: transparent;
+    touch-action: manipulation;
+    display: inline-flex;
+    text-decoration: none;
+    cursor: pointer;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    box-shadow: inset 0 0 0 0.2rem var(--border-default);
+    width: 3.6rem;
+    height: 3.6rem;
+    z-index: 1;
+    border-radius: 50%;
+    color: var(--text-body);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.carousel_container_product {
+    backface-visibility: hidden;
+    display: flex;
+    touch-action: pan-y pinch-zoom;
+    margin-left: 0;
+}
+.carousel_slide_product {
+    min-width: 0;
+    flex: 0 0 var(--slide-size);
+    padding-left: 0;
+}
+
+/* Remove boost button for Chrome, Safari, Edge, Opera */
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Remove boost button for Firefox */
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+.embla-thumbs {
+    --thumbs-slide-spacing: 0.8rem;
+    --thumbs-slide-height: 6rem;
+    margin-top: var(--thumbs-slide-spacing);
+}
+.embla-thumbs__viewport {
+overflow: hidden;
+}
+.embla-thumbs__container {
+display: flex;
+flex-direction: row;
+margin-left: calc(var(--thumbs-slide-spacing) * -1);
+}
+.embla-thumbs__slide {
+flex: 0 0 22%;
+min-width: 0;
+padding-left: var(--thumbs-slide-spacing);
+}
+@media (min-width: 576px) {
+.embla-thumbs__slide {
+    flex: 0 0 15%;
+}
+}

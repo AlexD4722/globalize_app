@@ -1,0 +1,171 @@
+@use '../mixins' as *;
+
+:root {
+    --rdp-accent-color: var(--theme-color) !important;
+    --rdp-background-color: gray;
+  }
+
+@include responsive(xs){
+    .rdp {
+        --rdp-cell-size: 25px !important;	//Size of the day cells.
+        --rdp-caption-font-size: 18px;	//Font size for the caption labels.
+        --rdp-accent-color: #eeeeee !important;	//Accent color for the background of selected days.
+        --rdp-accent-color-dark: var(--theme-color) !important;	//Accent color for the background of selected days
+        --rdp-background-color: #e7edff;	//Background color for the hovered/focused elements.
+        --rdp-background-color-dark: #var(--theme-color) !important;	//Background color for the hovered/focused elements
+        --rdp-outline: 2px solid var(--theme-color) !important;	//Outline border for focused elements.
+        --rdp-outline-selected: 3px var(--theme-color) !important;	//Outline border for focused and selected elements.
+        --rdp-selected-color: black !important;	//Color of selected day text.
+    }
+}
+
+@include responsive(sm){
+    .rdp {
+        --rdp-cell-size: 45px !important;	//Size of the day cells.
+    }
+}
+
+@include responsive(lg){
+    .rdp {
+        --rdp-cell-size: 55px !important;	//Size of the day cells.
+    }
+}
+
+
+.rdp-nav_button{
+    transition: all 200ms linear;
+
+    @include responsive (xs){
+        &:hover{
+            background: transparent !important;
+            color: black !important;
+        }
+    }
+
+    @include responsive (lg){
+        &:hover{
+            background: var(--theme-color) !important;
+            color: white !important;
+        }
+    }
+
+    &:disabled{
+        background: transparent !important;
+        color: black !important;
+    }
+}
+.rdp-day{
+    border: none !important;
+    font-size: 1rem !important;
+    
+    &:not(.rdp-day_range_start, .rdp-day_range_end){
+        &:hover{
+            color: var(--theme-color) !important;
+        }
+    }
+
+    &:not(.rdp-day_selected){
+        &:hover{
+            background-color: transparent !important;
+        }
+    }
+}
+
+.rdp-day_disabled {
+    text-decoration: line-through !important;
+}
+
+.rdp:not([dir='rtl']) .rdp-day_range_start, .rdp:not([dir='rtl']) .rdp-day_range_end {
+    position: relative;
+    background-color: black;
+    color: white;
+    border-radius: 999px !important;
+    overflow: visible !important;
+    
+}
+
+.rdp:not([dir='rtl']) .rdp-day_range_start:not(.rdp-day_range_end){
+    position: relative;
+    background-color: black;
+    color: white;
+    border-radius: 999px !important;
+    overflow: visible !important;
+    
+    &:before{
+        content: "";
+        position: absolute;
+        pointer-events: none;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        z-index: -10;
+        background-color: var(--rdp-accent-color);
+        color: var(--rdp-selected-color);
+        border-radius: 999px 0 0 999px;
+    }
+}
+.rdp:not([dir='rtl']) .rdp-day_range_end:not(.rdp-day_range_start) {
+    position: relative;
+    background-color: black;
+    color: white;
+    border-radius: 999px !important;
+    overflow: visible !important;
+
+    &:before{
+        content: "";
+        position: absolute;
+        pointer-events: none;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        z-index: -10;
+        background-color: var(--rdp-accent-color);
+        color: var(--rdp-selected-color);
+        border-radius: 0 999px 999px 0;
+    }
+}
+
+
+.rdp-months {
+    display: flex;
+}
+
+@include responsive(xs){
+    .rdp-multiple_months{
+        width: auto;
+    }
+    
+    .rdp-months {
+        overflow: auto;
+        flex-direction: column;
+        justify-content: start;
+    }
+    .rdp-month {
+        margin-bottom: 3rem !important;
+        margin-right: 0px !important;
+        margin-left: 0px !important;
+    }
+    
+}
+
+@include responsive(lg){
+    .rdp-multiple_months{
+        width: 100%;
+    }
+
+    .rdp-months {
+        overflow: visible;
+        flex-direction: row;
+        justify-content: space-evenly;
+    }
+    .rdp-month {
+        margin-bottom: 0 !important;
+        margin-right: 1em !important;
+    }
+}
+
+.rdp-multiple_months .rdp-caption{
+    margin-bottom: 1rem;
+}

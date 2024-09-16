@@ -1,0 +1,61 @@
+@use './mixins' as *;
+@use './variables' as *;
+@use './tailwind-utils' as *;
+@use './pages/home' as *;
+
+//Style used specifically for Emble Carousel in components/carousel directory
+@use './embla-carousel/index' as *;
+//Style used specifically for Date Picker
+@use './date-picker/index' as *;
+
+html{
+    color: black;
+    background: white;
+    font-family: "Aeonik";
+    font-weight: 400;
+    scrollbar-gutter: auto;
+}
+
+body{
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+::placeholder {
+    color: var(--text-unfocus);
+    opacity: 1; /* Firefox */
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+
+.disable-scrolling {
+    height: 100%;
+    overflow-y: hidden !important;
+    scrollbar-gutter: stable;
+}
+
+input[type=time] {
+  position: relative;
+}
+
+input[type=time]::-webkit-calendar-picker-indicator {
+  display: block;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  background: transparent;
+  cursor: pointer;
+}

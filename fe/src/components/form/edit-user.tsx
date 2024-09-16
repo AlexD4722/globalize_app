@@ -1,0 +1,127 @@
+import useStoreModal from "@/data/store/modal-store";
+import React, { useState } from "react";
+const EditUser = () => {
+  const { display, open, close } = useStoreModal();
+  const [userInfo, setUserInfo] = useState({
+    name: "",
+    phone: "",
+    sex: "",
+  });
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setUserInfo({
+      ...userInfo,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+    // console.log("Updated User Info:", userInfo);
+    close();
+  };
+  const handleClick = () => {
+    display ? close() : open();
+  };
+  const validate = () => {
+    const newErrors: { [key: string]: string } = {};
+    if (!userInfo.name) newErrors.name = "Name is required";
+    if (!userInfo.phone) newErrors.phone = "Phone is required";
+    if (!userInfo.sex) newErrors.sex = "Sex is required";
+    return newErrors;
+  };
+
+  return (
+    <div>
+      <div className="p-6">
+        <h2 className="text-2xl font-bold mb-4">Edit User Information</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label
+              htmlFor="name"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Name:
+            </label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={userInfo.name}
+              onChange={handleChange}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-[#f43f5e] sm:text-sm"
+            />
+            {errors.name && (
+              <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+            )}
+          </div>
+          <div className="mb-4">
+            <label
+              htmlFor="sex"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Sex:
+            </label>
+            <select
+              id="sex"
+              name="sex"
+              value={userInfo.sex}
+              onChange={handleChange}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-[#f43f5e] sm:text-sm"
+            >
+              <option value="">Select Sex</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+            </select>
+            {errors.sex && (
+              <p className="text-red-500 text-xs mt-1">{errors.sex}</p>
+            )}
+          </div>
+          <div className="mb-4">
+            <label
+              htmlFor="phone"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Phone:
+            </label>
+            <input
+              type="text"
+              id="phone"
+              name="phone"
+              value={userInfo.phone}
+              onChange={handleChange}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-[#f43f5e] sm:text-sm"
+            />
+            {errors.phone && (
+              <p className="text-red-500 text-xs mt-1">{errors.phone}</p>
+            )}
+          </div>
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={() => close()}
+              className="mr-4 py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-offset-2 "
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#f43f5e] hover:bg-[#f43f5e] focus:outline-none"
+            >
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+export default EditUser;
