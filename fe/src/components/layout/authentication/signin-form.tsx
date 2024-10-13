@@ -12,7 +12,7 @@ export default function SignInForm () {
     return (
         <>
         <AuthFormWrapper>
-            <RHFInputField inputName="email-signin" label="Email address"/>
+            <RHFInputField inputName="email-signin" label="Username"/>
             <RHFInputField inputName="password-signin" label="Password" type="password"/>
             <Button rounded={"regular"} className="py-4" type="submit">Sign In</Button>
         </AuthFormWrapper>

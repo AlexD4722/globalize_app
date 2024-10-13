@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useRef } from "react"
+import { ReactElement, useEffect, useRef, useState } from "react"
 import { AddNewListingLayout } from ".."
 import Head from "next/head"
 import Button from "@/components/button/classic-button";
@@ -9,6 +9,12 @@ import { RHFInputField } from "@/components/form/input-field";
 import { RHFTextAreaField } from "@/components/form/text_area-field";
 import { ComboBox, IOption } from "@/components/form/combo-box";
 import { listingProcessState } from "@/services/zustand/listing_process-slice";
+import AddressSelector from "@/components/form/adddress";
+interface Address {
+    provinces: string;
+    districts: string;
+    wards: string;
+}
 
 interface IOptionProperty extends IOption {
     type: "multiple" | "single"
@@ -44,7 +50,6 @@ export const propertyTypeOptions : IOptionProperty[] = [
 ]
 
 export default function AboutYourProperty () {
-
     const listingProcess = useLocalAppStore((state) => state.listingProcess);
     const setListingProcess = useLocalAppStore((state) => state.setListingProcess);
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -52,10 +57,16 @@ export default function AboutYourProperty () {
     const router = useRouter();
     const { id } = router.query;
     const methods = useForm();
-
+    const [address, setAddress] = useState<Address>({
+        provinces: '',
+        districts: '',
+        wards: ''
+    });
+    const handeleGetLocation = (data: any) => {
+        setAddress(data);
+    }
     const processToNextStep = (data: listingProcessState) => {
-        // console.log(data);
-
+        data.propertyLocation = address;
         setListingProcess({...listingProcess, ...data, id: id as string});
         router.push(`/owner/app/become-a-host/${id}/make-your-property-standout`);
     }
@@ -75,6 +86,7 @@ export default function AboutYourProperty () {
     useEffect(() => {
         playVideo();
     },[])
+
 
     return (
         <>
@@ -118,6 +130,7 @@ export default function AboutYourProperty () {
                             required: {value: true, message: "This field is required!"}
                         }}
                         />
+                        <AddressSelector onLocations={handeleGetLocation} />
                         <RHFInputField
                         defaultValue={listingProcess.propertyAddress}
                         inputName="propertyAddress" label="Address" 

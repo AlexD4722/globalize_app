@@ -22,4 +22,6 @@ public interface OwnerRepository extends JpaRepository<Owner, String> {
 
     @Query("SELECT r FROM Reservation r WHERE r.room.property.owner.userName = :name")
     public List<Reservation> findReservationsByUsername(String name);
+
+    public Optional<Owner> findByUserName(String userName);
 }

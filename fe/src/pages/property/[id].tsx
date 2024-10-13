@@ -123,7 +123,6 @@ export default function PropertyDetails() {
     const onApplyChange = (
         event: React.MouseEvent<HTMLButtonElement, MouseEvent>
     ) => {
-        console.log('Trigger apply change')
         setIsAvailabilityError(undefined)
 
         //Fetch new room result base on availabity-searchbar input (range, guest)
@@ -405,7 +404,7 @@ export default function PropertyDetails() {
                                     }
                                 />
                                 <CommonRule
-                                    title="Cancel before hour"
+                                    title="Refund before days"
                                     content={
                                         property.propertyCommonRules
                                             .cancelBeforeHour

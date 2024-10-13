@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
@@ -5,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../consts.dart';
 import '../providers/cart_order.dart';
+import '../providers/root.dart';
 import '../router/routers.dart';
 import 'fcmService.dart';
 import 'http.dart';
@@ -46,7 +49,7 @@ class StripeService {
   }
 
   Future<void> makePayment(
-      int money, BuildContext context, dynamic data) async {
+      double money, BuildContext context, dynamic data) async {
     try {
       final paymentIntent = await _createPaymentIntent(money, "usd");
       if (paymentIntent == null) return;
@@ -63,7 +66,7 @@ class StripeService {
   }
 
   Future<Map<String, String>?> _createPaymentIntent(
-      int amount, String currency) async {
+      double amount, String currency) async {
     try {
       final Dio dio = Dio();
       Map<String, dynamic> data = {
@@ -160,14 +163,15 @@ class StripeService {
                     ),
                     child: GestureDetector(
                         onTap: () {
+                          var setIndex = context.read<RootProvider>().setPageIndex;
+                          setIndex('Reservation');
                           Provider.of<CartOrder>(context, listen: false)
                               .clearCart();
-                          // Điều hướng đến màn hình kết quả tìm kiếm và xóa tất cả các màn hình trước đó
                           Navigator.pushNamedAndRemoveUntil(
                             context,
                             Routes.home,
                             (route) =>
-                                false, // Xóa tất cả các màn hình trước đó
+                                false,
                           );
                         },
                         child: const Text(
@@ -306,8 +310,8 @@ class StripeService {
     }
   }
 
-  String _calculateAmount(int amount) {
-    final calculatedAmount = amount * 100;
+  String _calculateAmount(double amount) {
+    final int calculatedAmount = (amount * 100).toInt();
     return calculatedAmount.toString();
   }
 }

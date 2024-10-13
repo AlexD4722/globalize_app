@@ -2,6 +2,7 @@ import 'package:booking_platform_app/app.dart';
 import 'package:booking_platform_app/providers/cart_order.dart';
 import 'package:booking_platform_app/providers/root.dart';
 import 'package:booking_platform_app/providers/search.dart';
+import 'package:booking_platform_app/providers/signUpResponse.dart';
 import 'package:booking_platform_app/services/navigationService.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -24,7 +25,6 @@ void main() async {
           messagingSenderId: "537316930511",
           projectId: "notificationmessagetest-a0e5b",
           storageBucket: "notificationmessagetest-a0e5b.appspot.com"));
-  // Cấu hình kênh thông báo
   const AndroidNotificationChannel channel = AndroidNotificationChannel(
     'high_importance_channel',
     'High Importance Notifications',
@@ -36,7 +36,6 @@ void main() async {
           AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(channel);
 
-  // Cấu hình xử lý thông báo foreground
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     RemoteNotification? notification = message.notification;
     AndroidNotification? android = message.notification?.android;
@@ -65,6 +64,7 @@ void main() async {
     ChangeNotifierProvider(
         create: (context) => Search()..initializeSearchParams()),
     ChangeNotifierProvider(create: (_) => CartOrder()),
+    ChangeNotifierProvider(create: (_) => SignUpResponseProvider())
   ], child: const Application()));
 }
 

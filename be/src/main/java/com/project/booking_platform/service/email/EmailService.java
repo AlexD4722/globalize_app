@@ -26,7 +26,7 @@ public class EmailService {
     public void sendEmail(String to, String subject, String htmlContent) {
         MimeMessagePreparator messagePreparator = mimeMessage -> {
             MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
-            messageHelper.setFrom("admin@booking.com");
+            messageHelper.setFrom("admin@globalize.com");
             messageHelper.setTo(to);
             messageHelper.setSubject(subject);
             messageHelper.setText(htmlContent, true);

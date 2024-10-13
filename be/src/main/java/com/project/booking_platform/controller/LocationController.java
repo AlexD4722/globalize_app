@@ -4,6 +4,7 @@ import com.project.booking_platform.model.District;
 import com.project.booking_platform.model.Province;
 import com.project.booking_platform.model.Ward;
 import com.project.booking_platform.service.database.LocationService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/location")
+@PreAuthorize("hasRole('GUEST')")
 public class LocationController {
     private final LocationService locationService;
 

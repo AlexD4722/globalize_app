@@ -23,7 +23,6 @@ export default function PropertyListingDetails() {
     })
     const propertyRooms = useQuery<unknown, Error, Array<iRoom>>({queryKey: ['propertyRooms', id]})
 
-    console.log(propertyRooms.data)
     const openRatingModal = () => {
         setReviewModal(true)
     }
@@ -107,7 +106,7 @@ export default function PropertyListingDetails() {
                                 {data.description}
                             </p>
                         </div>
-                        {data.facilities.length > 0 && (
+                        {data.facilities && data.facilities.length > 0 && (
                             <div className="mt-10">
                                 <div className="text-2xl font-medium">
                                     Facilities:
@@ -246,7 +245,7 @@ export default function PropertyListingDetails() {
                                     )}
                                 />
                                 <CommonRule
-                                    title="Cancel before hour"
+                                    title="Refund before days"
                                     content={
                                         data
                                             .propertyCommonRules

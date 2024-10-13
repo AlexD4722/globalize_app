@@ -26,4 +26,8 @@ public class LocationService {
     public List<Ward> getWards(String districtCode) {
         return locationRepository.findWards(districtCode);
     }
+
+    public Ward getWard(String wardCode) {
+        return locationRepository.findWard(wardCode);
+    }
 }

@@ -35,12 +35,12 @@ export default class HttpClient {
         this.axiosInstance = axios.create(createConfig)
     }
 
-    public async get<T = any>(url: string, userType?: UserType) {      
+    public async get<T = any>(url: string, userType?: UserType) {
         if (userType) await this.setAuthorization(userType)
         return this.axiosInstance.get<T>(url, this.config)
     }
 
-    public async post<T = any>(url: string, data: any, userType?: UserType) {
+    public async post<T = any>(url: string, data?: any, userType?: UserType) {
         if (userType) await this.setAuthorization(userType)
         return this.axiosInstance.post<T>(url, data, this.config)
     }
@@ -61,13 +61,29 @@ export default class HttpClient {
         }
         const token = await this.getToken(userType)
         this.config.headers = {
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
         }
+    }
+
+    public async postMultipart<T = any>(
+        url: string,
+        data: any,
+        userType?: UserType
+    ) {
+        if (userType) await this.setAuthorization(userType)
+        this.config.headers = {
+            ...this.config.headers,
+            'Content-Type': 'multipart/form-data',
+        }
+        const res = await this.axiosInstance.post<T>(url, data, this.config)
+        delete this.config.headers['Content-Type']
+        return res
     }
 
     private async getToken(userType: UserType): Promise<string | null> {
         // Get the token from the local storage
-        const actor = userType.actor.charAt(0).toUpperCase() + userType.actor.slice(1)
+        const actor =
+            userType.actor.charAt(0).toUpperCase() + userType.actor.slice(1)
         const token = localStorage.getItem(`tokenFor${actor}`)
         if (!token) return null
 
@@ -76,7 +92,9 @@ export default class HttpClient {
             const rToken = localStorage.getItem(`refreshTokenFor${actor}`)
             if (!rToken) return null
             if (this.isExpired(rToken)) return null
-            const newToken = await refreshToken(userType.actor) as TokenResponse
+            const newToken = (await refreshToken(
+                userType.actor
+            )) as TokenResponse
             return newToken.token
         }
 
@@ -89,6 +107,18 @@ export default class HttpClient {
         if (!isTokenPayload(decodedToken)) return false
         if (!decodedToken.exp) return false
         return decodedToken.exp < Date.now() / 1000
+    }
+    public async postMultipartWithoutUserType<T = any>(
+        url: string,
+        data: any,
+    ) {
+        this.config.headers = {
+            ...this.config.headers,
+            'Content-Type': 'multipart/form-data',
+        }
+        const res = await this.axiosInstance.post<T>(url, data, this.config)
+        delete this.config.headers['Content-Type']
+        return res
     }
 }
 

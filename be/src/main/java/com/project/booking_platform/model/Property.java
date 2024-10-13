@@ -29,10 +29,14 @@ public class Property {
     String description;
     @Column(name = "address_specific", nullable = false, columnDefinition = "NVARCHAR(255)")
     String addressSpecific;
-    @Column(name = "location_gps", nullable = false, columnDefinition = "NVARCHAR(255)")
+    @Column(name = "location_gps", columnDefinition = "NVARCHAR(255)")
     String locationGps;
-    @Column(name = "picture", nullable = false, columnDefinition = "NVARCHAR(255)")
+    @Column(name = "picture", columnDefinition = "NVARCHAR(255)")
     String picture;
+    @Column(name = "refund_percent", nullable = false)
+    int refundPercent;
+    @Column(name="refund_allowed_days", nullable = false)
+    int refundAllowedDays;
 
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.ORDINAL)

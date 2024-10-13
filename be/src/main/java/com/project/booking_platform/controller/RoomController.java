@@ -3,10 +3,12 @@ package com.project.booking_platform.controller;
 import com.project.booking_platform.model.Room;
 import com.project.booking_platform.service.database.RoomService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/room")
+@PreAuthorize("hasRole('ADMIN')")
 public class RoomController {
     private final RoomService roomService;
     public RoomController(RoomService roomService) {

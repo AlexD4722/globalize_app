@@ -17,41 +17,49 @@ const destinations = [
         id: 1,
         name: 'Bali, Indonesia',
         image: destinationsStaticAssetsSources + 'bali-indo.jpg',
+        to: '/search?destination=bali'
     },
     {
         id: 2,
         name: 'Venice, Italy',
         image: destinationsStaticAssetsSources + 'venice-italy.jpg',
+        to: '/search?destination=bali'
     },
     {
         id: 3,
         name: 'Sydney, Australia',
         image: destinationsStaticAssetsSources + 'sydney-australia.jpg',
+        to: '/search?destination=bali'
     },
     {
         id: 4,
         name: 'New York, USA',
         image: destinationsStaticAssetsSources + 'newyork-usa.jpg',
+        to: '/search?destination=bali'
     },
     {
         id: 5,
         name: 'Tokyo, Japan',
         image: destinationsStaticAssetsSources + 'tokyo-japan.jpg',
+        to: '/search?destination=bali'
     },
     {
         id: 6,
         name: 'Paris, France',
         image: destinationsStaticAssetsSources + 'paris-france.jpg',
+        to: '/search?destination=bali'
     },
     {
         id: 7,
         name: 'Geneva, Switzerland',
         image: destinationsStaticAssetsSources + 'geneva-switzerland.jpg',
+        to: '/search?destination=bali'
     },
     {
         id: 8,
         name: 'Da Nang, Vietnam',
         image: destinationsStaticAssetsSources + 'danang-vietnam.jpg',
+        to: '/search?destination=bali'
     },
 ]
 
@@ -304,6 +312,7 @@ export default function Home() {
                                 <DestinationCard
                                     src={destination.image}
                                     label={destination.name}
+                                    to={destination.to}
                                 />
                             </Slide>
                         ))}

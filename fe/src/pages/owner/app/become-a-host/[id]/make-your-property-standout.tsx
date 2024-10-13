@@ -44,8 +44,6 @@ export default function MakeYourPropertyStandOut () {
     const { watch } = methods;
 
     const processToNextStep = (data: any) => {
-        // console.log(data);
-        // console.log(images);
 
         if((data["facility"] && data["facility"].length === 0) || !data["facility"]) {
             setFacilityError("Please select at least one facility");

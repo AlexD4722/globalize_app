@@ -9,6 +9,8 @@ import {
     iReservationInfo,
     ReservationParamsMapping,
 } from '@/components/type'
+import { CheckoutPage } from '@/components/ui/CheckoutPage'
+
 import { convertDDMMYYYYtoDate } from '@/function/date-converter'
 import { DayCounterBetweenDateRange } from '@/function/day-counter'
 import { matchRatingRank } from '@/function/rank-matching-description'
@@ -61,7 +63,8 @@ type ReservationContextState = {
     setConfirmationStatus: Dispatch<
         SetStateAction<NotificationPhase | undefined>
     >
-    reserveMutation: UseMutationResult<unknown, Error, ReserveRoomOptions>
+    currentPropertyInfo: iPropertyReservationInfo | undefined
+    reserveMutation: UseMutationResult<any, Error, ReserveRoomOptions>
 }
 
 export const ReservationContext = createContext<ReservationContextState | null>(
@@ -88,16 +91,14 @@ const arrivalTime = [...arrivalTimeArray()]
 export default function Reservation() {
     const { query, isReady, push, back } = useRouter()
     const [phase, setPhase] = useState<ReservationPhase>('details')
-    const [currentPopertyInfo, setCurrentPropertyInfo] =
+    const [currentPropertyInfo, setCurrentPropertyInfo] =
         useState<iPropertyReservationInfo>()
     const [currentReservationInfo, setCurrentReservationInfo] =
         useState<iReservationInfo>()
     const [DetailedReserve, setDetailedReserve] = useState<boolean>(false)
-    const [priceBeforeTaxAndCharge, setPriceBeforeTaxAndCharge] =
-        useState<number>(0)
-    const [taxAndCharge, setTaxAndCharge] = useState<number>(0)
-    const [priceAfterTaxAndCharge, setPriceAfterTaxAndCharge] =
-        useState<number>(0)
+    const [pricePerNight, setPriceBeforeTaxAndCharge] = useState<number>(0)
+    const [lengthOfStays, setTaxAndCharge] = useState<number>(0)
+    const [totalPrice, setPriceAfterTaxAndCharge] = useState<number>(0)
     const [reservationFormData, setReservationFormData] =
         useState<ReservationFormValues>()
     const [confirmationStatus, setConfirmationStatus] =
@@ -128,16 +129,13 @@ export default function Reservation() {
                 convertDDMMYYYYtoDate(currentReservationInfo.checkIn, ''),
                 convertDDMMYYYYtoDate(currentReservationInfo.checkOut, '')
             )
-            const priceBeforeTaxAndCharge =
-                currentReservationInfo.summary.totalPricePerNight *
-                lengthOfStays
-            const taxAndCharge = priceBeforeTaxAndCharge * 0.1
-            const priceAfterTaxAndCharge =
-                priceBeforeTaxAndCharge + taxAndCharge
+            const pricePerNight =
+                currentReservationInfo.summary.totalPricePerNight
+            const totalPrice = pricePerNight * lengthOfStays
 
-            setPriceBeforeTaxAndCharge(priceBeforeTaxAndCharge)
-            setTaxAndCharge(taxAndCharge)
-            setPriceAfterTaxAndCharge(priceAfterTaxAndCharge)
+            setPriceBeforeTaxAndCharge(pricePerNight)
+            setTaxAndCharge(lengthOfStays)
+            setPriceAfterTaxAndCharge(totalPrice)
         }
     }, [currentReservationInfo])
 
@@ -146,6 +144,7 @@ export default function Reservation() {
             value={{
                 setPhase,
                 currentReservationInfo,
+                currentPropertyInfo,
                 reservationFormData,
                 setReservationFormData,
                 confirmationStatus,
@@ -190,20 +189,20 @@ export default function Reservation() {
                 </div>
             </div>
 
-            {currentPopertyInfo && currentReservationInfo && (
+            {currentPropertyInfo && currentReservationInfo && (
                 <div className="mb-20 mt-10 grid lg:grid-cols-[40%_60%] xs:grid-cols-1 gap-5 lg:pr-5 items-start">
                     <div className="border border-borderDefault rounded-2xl p-8 w-full hover:elevation-shadow-2 duration-200">
                         <div>
                             <div className="text-3xl font-medium">
-                                {currentPopertyInfo.propertyName}
+                                {currentPropertyInfo.propertyName}
                             </div>
                             <div className="my-3">
-                                {currentPopertyInfo.propertyAddress}
+                                {currentPropertyInfo.propertyAddress}
                             </div>
                             <div className="py-3">
                                 <Image
-                                    src={`${JAVA_URL}/${currentPopertyInfo.propertyFeaturedImage}`}
-                                    alt={currentPopertyInfo.propertyName}
+                                    src={`${JAVA_URL}/${currentPropertyInfo.propertyFeaturedImage}`}
+                                    alt={currentPropertyInfo.propertyName}
                                     width={50}
                                     height={50}
                                     className="w-1/2 h-auto aspect-video rounded-lg"
@@ -215,21 +214,24 @@ export default function Reservation() {
                                         <StarRate />
                                     </span>
                                     <span>
-                                        {currentPopertyInfo.propertyReview.averageRating.toFixed(
+                                        {currentPropertyInfo.propertyReview.averageRating.toFixed(
                                             1
                                         )}
                                     </span>
                                 </div>
                                 <div className="font-medium">
                                     {matchRatingRank(
-                                        currentPopertyInfo.propertyReview
+                                        currentPropertyInfo.propertyReview
                                             .averageRating
                                     )}
                                 </div>
                             </div>
                             <div className="text-textUnfocus">
                                 from{' '}
-                                {currentPopertyInfo.propertyReview.totalReviews}{' '}
+                                {
+                                    currentPropertyInfo.propertyReview
+                                        .totalReviews
+                                }{' '}
                                 verified guests reviews
                             </div>
                         </div>
@@ -367,15 +369,15 @@ export default function Reservation() {
                                 <tbody>
                                     <tr>
                                         <th>Price</th>
-                                        <td>${priceBeforeTaxAndCharge}</td>
+                                        <td>${pricePerNight}</td>
                                     </tr>
                                     <tr>
-                                        <th>Tax and Charge</th>
-                                        <td>${taxAndCharge}</td>
+                                        <th>Nights</th>
+                                        <td>{lengthOfStays}</td>
                                     </tr>
                                     <tr>
                                         <th className="text-xl">Total</th>
-                                        <td>${priceAfterTaxAndCharge}</td>
+                                        <td>${totalPrice}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -384,7 +386,9 @@ export default function Reservation() {
 
                     {phase === 'details' && <DetailsPhase />}
 
-                    {phase === 'confirmation' && <ConfirmationPhase />}
+                    {phase === 'confirmation' && (
+                        <ConfirmationPhase price={totalPrice} />
+                    )}
 
                     {phase === 'notification' && <NotificationPhase />}
                 </div>
@@ -414,7 +418,6 @@ const NotificationPhase = () => {
     ])
 
     useEffect(() => {
-        console.log(reserveMutation.failureReason)
         switch (reserveMutation.status) {
             case 'success':
                 setConfirmationStatus({
@@ -425,7 +428,7 @@ const NotificationPhase = () => {
             case 'idle':
                 setConfirmationStatus({
                     status: 'pending',
-                    message: 'Your request is about to send.'
+                    message: 'Your request is about to send.',
                 })
             case 'pending':
                 setConfirmationStatus({
@@ -481,9 +484,11 @@ const NotificationPhase = () => {
         </>
     )
 }
-
+interface ConfirmationPhaseProps {
+    price: number
+}
 //Confirmation Phase
-const ConfirmationPhase = () => {
+const ConfirmationPhase: React.FC<ConfirmationPhaseProps> = ({ price }) => {
     const router = useRouter()
     const methods = useForm<ConfirmationFormValues>()
     const {
@@ -491,10 +496,16 @@ const ConfirmationPhase = () => {
         setReservationFormData,
         reservationFormData,
         currentReservationInfo,
+        currentPropertyInfo,
         setConfirmationStatus,
         reserveMutation,
     } = useContext(ReservationContext)!
-
+    const [reservationOptions, setReservationOptions] =
+        useState<ReserveRoomOptions>({
+            checkInDate: currentReservationInfo?.checkIn ?? '',
+            checkOutDate: currentReservationInfo?.checkOut ?? '',
+            roomId: currentReservationInfo?.details[0].roomId ?? '',
+        })
     const onSubmit = async (data: ConfirmationFormValues) => {
         const reservationOptions: ReserveRoomOptions = {
             checkInDate: currentReservationInfo?.checkIn ?? '',
@@ -503,9 +514,16 @@ const ConfirmationPhase = () => {
         }
         // Call reserveMutation here
         reserveMutation.mutate(reservationOptions)
-        
 
         // Change the phase to notification
+        setPhase('notification')
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'instant',
+        })
+    }
+    const movePageNotification = () => {
         setPhase('notification')
         window.scrollTo({
             top: 0,
@@ -524,110 +542,97 @@ const ConfirmationPhase = () => {
     return (
         <>
             <FormProvider {...methods}>
-                <form onSubmit={methods.handleSubmit(onSubmit)}>
-                    <div className="border border-borderDefault rounded-2xl grid grid-flow-row gap-5">
-                        <div className="lg:p-8 sm:p-3">
-                            <div className="text-2xl mb-5">
-                                Your informations:
+                <div>
+                    <form onSubmit={methods.handleSubmit(onSubmit)}>
+                        <div className="border border-borderDefault rounded-2xl grid grid-flow-row gap-5">
+                            <div className="lg:p-8 sm:p-3">
+                                <div className="text-2xl mb-5">
+                                    Your informations:
+                                </div>
+                                <ul className="grid-flow-row grid gap-5 [&>div]:w-full">
+                                    <li>
+                                        <span>Fullname: </span>
+                                        <span className="font-medium">
+                                            {reservationFormData?.fullname}
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span>Email: </span>
+                                        <span className="font-medium">
+                                            {
+                                                reservationFormData?.[
+                                                    'email-reservation'
+                                                ]
+                                            }
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span>Phone: </span>
+                                        <span className="font-medium">
+                                            {reservationFormData?.phone}
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span>City/Region: </span>
+                                        <span className="font-medium">
+                                            {reservationFormData?.address}
+                                        </span>
+                                    </li>
+                                </ul>
                             </div>
-                            <ul className="grid-flow-row grid gap-5 [&>div]:w-full">
-                                <li>
-                                    <span>Fullname: </span>
-                                    <span className="font-medium">
-                                        {reservationFormData?.fullname}
-                                    </span>
-                                </li>
-                                <li>
-                                    <span>Email: </span>
-                                    <span className="font-medium">
+
+                            <div className="h-[1px] w-full border-t border-borderDefault"></div>
+                            <div className="lg:p-8 sm:p-3">
+                                <div className="text-2xl mb-5">
+                                    Special Requests
+                                </div>
+                                <div className="mb-5 text-sm text-textUnfocus">
+                                    Special requests cannot be guaranteed - but
+                                    the property will do its best to meet your
+                                    needs. You can always make a special request
+                                    after your booking is complete!
+                                </div>
+                                <div>
+                                    <p>
                                         {
                                             reservationFormData?.[
-                                                'email-reservation'
+                                                'special-requests'
                                             ]
                                         }
-                                    </span>
-                                </li>
-                                <li>
-                                    <span>Phone: </span>
-                                    <span className="font-medium">
-                                        {reservationFormData?.phone}
-                                    </span>
-                                </li>
-                                <li>
-                                    <span>City/Region: </span>
-                                    <span className="font-medium">
-                                        {reservationFormData?.address}
-                                    </span>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div className="h-[1px] w-full border-t border-borderDefault"></div>
-                        <div className="lg:p-8 sm:p-3">
-                            <div className="text-2xl mb-5">
-                                Special Requests
+                                    </p>
+                                </div>
                             </div>
-                            <div className="mb-5 text-sm text-textUnfocus">
-                                Special requests cannot be guaranteed - but the
-                                property will do its best to meet your needs.
-                                You can always make a special request after your
-                                booking is complete!
-                            </div>
-                            <div>
-                                <p>
-                                    {reservationFormData?.['special-requests']}
-                                </p>
+                            <div className="h-[1px] w-full border-t border-borderDefault"></div>
+                            <div className="lg:p-8 sm:p-3">
+                                <div className="text-2xl mb-5">
+                                    Your arrival time
+                                </div>
+                                <div>
+                                    <span>Estimated arrival time: </span>
+                                    <span className="font-medium">
+                                        {reservationFormData?.['arrival-time']}
+                                    </span>
+                                </div>
                             </div>
                         </div>
-                        <div className="h-[1px] w-full border-t border-borderDefault"></div>
+                    </form>
+                    <div className="mt-5 border border-borderDefault rounded-2xl grid grid-flow-row gap-5">
                         <div className="lg:p-8 sm:p-3">
-                            <div className="text-2xl mb-5">
-                                Your arrival time
-                            </div>
-                            <div>
-                                <span>Estimated arrival time: </span>
-                                <span className="font-medium">
-                                    {reservationFormData?.['arrival-time']}
-                                </span>
-                            </div>
+                            <div className="text-2xl mb-5">Payment method</div>
+                            <p className="text-xl mb-5">
+                                You must deposit 25% of the total order in
+                                advance.
+                            </p>
+                            <div></div>{' '}
+                            {reservationOptions && (
+                                <CheckoutPage
+                                    amount={Math.floor(price * 0.25)}
+                                    reservationOrder={reservationOptions}
+                                    move={movePageNotification}
+                                />
+                            )}
                         </div>
                     </div>
-
-                    <div className="border border-borderDefault rounded-2xl grid grid-flow-row gap-5 mt-5">
-                        <div className="lg:p-8 sm:p-3">
-                            <div className="text-2xl mb-5">Payment:</div>
-                            <div className="flex flex-col">
-                                {payment.map((method) => (
-                                    <label
-                                        key={method.id}
-                                        className="mt-2 first:mt-0"
-                                    >
-                                        <span className="mr-2">
-                                            <input
-                                                type="radio"
-                                                name="payment"
-                                                onChange={(e) => {
-                                                    setPaymentMethod(
-                                                        e.target.value
-                                                    )
-                                                }}
-                                                value={method.value}
-                                            />
-                                        </span>
-                                        <span
-                                            className={clsx(
-                                                paymentMethod ===
-                                                    method.value && ''
-                                            )}
-                                        >
-                                            {method.value}
-                                        </span>
-                                    </label>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-
                     <div className="w-full flex items-end justify-between mt-5">
                         <Button
                             type="button"
@@ -637,11 +642,8 @@ const ConfirmationPhase = () => {
                         >
                             To Previous Step
                         </Button>
-                        <Button type="submit" rounded={'regular'}>
-                            Finish reservation
-                        </Button>
                     </div>
-                </form>
+                </div>
             </FormProvider>
         </>
     )

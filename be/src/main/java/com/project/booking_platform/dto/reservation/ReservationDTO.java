@@ -18,4 +18,6 @@ public class ReservationDTO {
     String roomPicture;
     int capacity;
     String status;
+    String guestFirstName;
+    String guestLastName;
 }

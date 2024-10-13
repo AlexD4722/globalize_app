@@ -3,9 +3,10 @@ import React, { useState } from "react";
 const EditUser = () => {
   const { display, open, close } = useStoreModal();
   const [userInfo, setUserInfo] = useState({
-    name: "",
+    firstName: "",
+    lastName: "",
     phone: "",
-    sex: "",
+    idNumber: "",
   });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const handleChange = (
@@ -25,7 +26,6 @@ const EditUser = () => {
       setErrors(validationErrors);
       return;
     }
-    // console.log("Updated User Info:", userInfo);
     close();
   };
   const handleClick = () => {
@@ -33,9 +33,10 @@ const EditUser = () => {
   };
   const validate = () => {
     const newErrors: { [key: string]: string } = {};
-    if (!userInfo.name) newErrors.name = "Name is required";
+    if (!userInfo.firstName) newErrors.firstName = "First name is required";
+    if (!userInfo.lastName) newErrors.lastName = "Last name is required";
     if (!userInfo.phone) newErrors.phone = "Phone is required";
-    if (!userInfo.sex) newErrors.sex = "Sex is required";
+    if (!userInfo.idNumber) newErrors.idNumber = "Id number is required";
     return newErrors;
   };
 
@@ -49,40 +50,37 @@ const EditUser = () => {
               htmlFor="name"
               className="block text-sm font-medium text-gray-700"
             >
-              Name:
+              Fist Name:
             </label>
             <input
               type="text"
               id="name"
               name="name"
-              value={userInfo.name}
+              value={userInfo.firstName}
               onChange={handleChange}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-[#f43f5e] sm:text-sm"
             />
-            {errors.name && (
-              <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+            {errors.firstName && (
+              <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>
             )}
           </div>
           <div className="mb-4">
             <label
-              htmlFor="sex"
+              htmlFor="name"
               className="block text-sm font-medium text-gray-700"
             >
-              Sex:
+              Last Name:
             </label>
-            <select
-              id="sex"
-              name="sex"
-              value={userInfo.sex}
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={userInfo.lastName}
               onChange={handleChange}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-[#f43f5e] sm:text-sm"
-            >
-              <option value="">Select Sex</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-            </select>
-            {errors.sex && (
-              <p className="text-red-500 text-xs mt-1">{errors.sex}</p>
+            />
+            {errors.lastName && (
+              <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>
             )}
           </div>
           <div className="mb-4">
@@ -102,6 +100,25 @@ const EditUser = () => {
             />
             {errors.phone && (
               <p className="text-red-500 text-xs mt-1">{errors.phone}</p>
+            )}
+          </div>
+          <div className="mb-4">
+            <label
+              htmlFor="phone"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Id Number:
+            </label>
+            <input
+              type="text"
+              id="phone"
+              name="phone"
+              value={userInfo.idNumber}
+              onChange={handleChange}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-[#f43f5e] sm:text-sm"
+            />
+            {errors.idNumber && (
+              <p className="text-red-500 text-xs mt-1">{errors.idNumber}</p>
             )}
           </div>
           <div className="flex justify-end">

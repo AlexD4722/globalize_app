@@ -281,7 +281,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen>
                                 _propertyCart!.carts,
                                 parseDate(searchParams!.from),
                                 parseDate(searchParams.to)) *
-                                0.10).toInt()}',
+                                0.25).toInt()}',
                             style: const TextStyle(
                               fontSize: 16,
                               color: Colors.black,
@@ -314,9 +314,9 @@ class _OrderDetailScreenState extends State<OrderDetailScreen>
                           StripeService.instance.makePayment(
                               (calculateTotalPrice(
                                   _propertyCart!.carts,
-                                  parseDate(searchParams!.from),
+                                  parseDate(searchParams.from),
                                   parseDate(searchParams.to)) *
-                                  0.10).toInt(), context,
+                                  0.25), context,
                               reservations
                           );
                           // await confirmReservation(reservations);

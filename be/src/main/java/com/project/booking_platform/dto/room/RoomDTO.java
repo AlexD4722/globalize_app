@@ -1,4 +1,4 @@
-package com.project.booking_platform.dto.property;
+package com.project.booking_platform.dto.room;
 
 import com.project.booking_platform.model.Amenity;
 import com.project.booking_platform.model.Bedroom;

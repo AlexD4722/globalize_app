@@ -18,25 +18,18 @@ class ButtonAppbarBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 50, // Set the height
-      width: 50, // Set the width
-      child: ElevatedButton(
-        style: ButtonStyle(
-          backgroundColor: WidgetStateProperty.all<Color>(
-              selectedButtonIndex == buttonIndex
-                  ? const Color(0xFFFADBE0)
-                  : Colors.white),
-          shadowColor: WidgetStateProperty.all<Color>(Colors.white),
-          overlayColor: WidgetStateProperty.all<Color>(Colors.transparent),
-          shape: WidgetStateProperty.all<OutlinedBorder>(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(100),
-              side: const BorderSide(color: Colors.white, width: 1.0),
-            ),
-          ),
+    return TextButton(
+      onPressed: () => onButtonPressed(buttonIndex),
+      style: TextButton.styleFrom(
+        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+        backgroundColor: selectedButtonIndex == buttonIndex
+            ? const Color(0xFFFADBE0)
+            : Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(100),
         ),
-        onPressed: () => onButtonPressed(buttonIndex),
+      ),
+      child: Center(
         child: Text(title,
             style: TextStyle(
                 color: selectedButtonIndex == buttonIndex

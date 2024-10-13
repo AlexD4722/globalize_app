@@ -16,4 +16,7 @@ public interface LocationRepository extends JpaRepository<Province, String> {
 
     @Query("select w from Ward w join w.district d where d.code = :districtCode")
     List<Ward> findWards(String districtCode);
+
+    @Query("select w from Ward w where w.code = :wardCode")
+    Ward findWard(String wardCode);
 }

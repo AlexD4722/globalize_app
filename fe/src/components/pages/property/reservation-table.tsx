@@ -23,7 +23,6 @@ const ReservationTable = ({rooms} : {rooms: Array<iRoom>}) => {
     const { guests, range, onReserveRooms } = useContext(PropertyContext)!;
 
     const onSubmit = async (data: any) => { 
-        console.log(data);
 
         if(totalRooms > 0){
             //Handle reservation
@@ -75,8 +74,6 @@ const ReservationTable = ({rooms} : {rooms: Array<iRoom>}) => {
             setTotalRoom(currentTotalRooms);
             setCurrentReserve(reservedRoom);
         });
-
-        console.log(currentReserve);
 
         return () => subscription.unsubscribe();
 

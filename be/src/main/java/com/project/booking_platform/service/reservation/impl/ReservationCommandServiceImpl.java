@@ -34,7 +34,7 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
 
     @Transactional(rollbackFor = {Throwable.class})
     @Override
-    public void insert(CreateReservationDto createReservationDto) throws RuntimeException {
+    public String insert(CreateReservationDto createReservationDto) throws RuntimeException {
 
         Optional<Room> roomOptional = roomRepository.findById(createReservationDto.getRoomId());
         if (roomOptional.isEmpty()) {
@@ -57,10 +57,9 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
             reservation.setRoom(roomOptional.get());
             reservation.setGuest(guestOptional.get());
             reservationRepository.save(reservation);
+            return reservation.getId();
         } catch (Exception e) {
             LOGGER.error("Error occurred during insert.", e);
             throw new RuntimeException("Error occurred during creating Reservation", e);
-        }
-    }
-
+        }}
 }

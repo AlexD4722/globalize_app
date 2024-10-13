@@ -6,6 +6,7 @@ import com.project.booking_platform.dto.reservation.CreateReservationDto;
 import com.project.booking_platform.dto.reservation.CreateReservationRequestDto;
 import com.project.booking_platform.responses.ResponseHandler;
 import com.project.booking_platform.service.database.GuestService;
+import com.project.booking_platform.service.database.ReservationService;
 import com.project.booking_platform.service.email.EmailService;
 import com.project.booking_platform.service.reservation.ReservationCommandService;
 import com.project.booking_platform.service.room.RoomQueryService;
@@ -13,31 +14,34 @@ import com.project.booking_platform.utils.DateUtils;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/api/reservation")
+@PreAuthorize("hasRole('GUEST')")
 public class ReservationController {
     private final ReservationCommandService reservationCommandService;
     private final RoomQueryService roomQueryService;
     private final EmailService emailService;
     private final GuestService guestService;
+    private final ReservationService reservationService;
 
-    public ReservationController(ReservationCommandService reservationCommandService, RoomQueryService roomQueryService, EmailService emailService, GuestService guestService) {
+    public ReservationController(ReservationCommandService reservationCommandService, RoomQueryService roomQueryService, EmailService emailService, GuestService guestService, ReservationService reservationService) {
         this.reservationCommandService = reservationCommandService;
         this.roomQueryService = roomQueryService;
         this.emailService = emailService;
         this.guestService = guestService;
+        this.reservationService = reservationService;
     }
 
     private ResponseEntity<Object> buildAndValidateReservationDto(CreateReservationRequestDto createReservationRequestDto, LocalDate today) {
@@ -145,11 +149,11 @@ public class ReservationController {
         CreateReservationDto createReservationDto = (CreateReservationDto) response.getBody();
         if (roomQueryService.CheckRoomAvailability(createReservationRequestDto.getRoomId(), createReservationDto.getCheckInDate(), createReservationDto.getCheckOutDate())) {
             try {
-                reservationCommandService.insert(createReservationDto);
+                String idReservation = reservationCommandService.insert(createReservationDto);
                 return ResponseHandler.responseBuilder(
                         "Reservation Created Successfully",
                         HttpStatus.CREATED,
-                        null
+                        idReservation
                 );
             } catch (Exception e) {
                 return ResponseHandler.responseBuilder(
@@ -179,5 +183,23 @@ public class ReservationController {
                 HttpStatus.CONFLICT,
                 null
         );
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteReservation(@RequestParam String id) {
+        try {
+            reservationService.removeReservation(id);
+            return ResponseHandler.responseBuilder(
+                    "Reservation Deleted Successfully",
+                    HttpStatus.OK,
+                    null
+            );
+        } catch (Exception e) {
+            return ResponseHandler.responseBuilder(
+                    "Error occurred during deleting Reservation",
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    null
+            );
+        }
     }
 }

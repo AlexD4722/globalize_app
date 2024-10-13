@@ -1,6 +1,6 @@
 package com.project.booking_platform.service.database;
 
-import com.project.booking_platform.dto.property.RoomDTO;
+import com.project.booking_platform.dto.room.RoomDTO;
 import com.project.booking_platform.model.Room;
 import com.project.booking_platform.repository.RoomRepository;
 import org.modelmapper.ModelMapper;

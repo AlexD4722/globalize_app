@@ -62,7 +62,7 @@ export const getGuestProfile = async () => {
 }
 
 export const getOwnerProperties = async () => {
-    const response = await JavaClient.get(`api/owner/properties`, {
+    const response = await JavaClient.get(`api/owners/properties`, {
         actor: 'owner',
     })
     return response.data
@@ -71,3 +71,28 @@ export const getOwnerProperties = async () => {
 function isActor(value: any): value is 'owner' | 'guest' | 'admin' {
     return value === 'owner' || value === 'guest' || value === 'admin'
 }
+// Get Location
+export const getProvinces = async () => {
+    const response = await JavaClient.get(
+        `api/location/provinces`,
+        { actor: 'owner' }
+    )
+    return response.data
+}
+
+export const getDistricts = async ({ queryKey }: { queryKey: QueryKey }) => {
+    const [_, provinceCode] = queryKey;
+    const response = await JavaClient.get(
+        `api/location/provinces/${provinceCode}/districts`,
+        { actor: 'owner' }
+    );
+    return response.data;
+};
+export const getWards = async ({ queryKey }: { queryKey: QueryKey }) => {
+    const [_, districtCode] = queryKey;
+    const response = await JavaClient.get(
+        `api/location/districts/${districtCode}/wards`,
+        { actor: 'owner' }
+    );
+    return response.data;
+};

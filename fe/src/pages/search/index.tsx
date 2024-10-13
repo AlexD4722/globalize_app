@@ -580,9 +580,9 @@ export default function Search() {
   };
   return (
     <div>
-      <Modal isOpen={false}>
+      {/* <Modal isOpen={false} >
         <BoxMessage icon={boxMessage.icon} message={boxMessage.message} />
-      </Modal>
+      </Modal> */}
       <div className="relative grid lg:grid-cols-[25%_75%] sm:grid-cols-1 gap-5 mb-[3rem]">
         {/* Component filter */}
 

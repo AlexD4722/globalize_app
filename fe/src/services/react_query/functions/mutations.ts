@@ -1,4 +1,5 @@
-import { NodeClient, JavaClient } from '@/services/HttpRequest'
+
+import { NodeClient, JavaClient } from '@/services/httpRequest'
 import { TokenPayload } from '@/services/jwt/token'
 import jwt from 'jsonwebtoken'
 
@@ -51,10 +52,72 @@ export const reserveRoom = async (options: ReserveRoomOptions) => {
     return response.data
 }
 
-// Remove a property as an owner
-export const deleteProperty = async (id: string) => {
-    const response = await JavaClient.delete(`api/owner/properties/${id}`, {
-        actor: 'owner'
+// Create a property as an owner
+export const createProperty = async (propertyData: FormData) => {
+    const response = await JavaClient.postMultipart(
+        `api/owners/properties`,
+        propertyData,
+        { actor: 'owner' }
+    )
+    return response.data
+}
+
+// Disable a property as an owner
+export const disableProperty = async (id: string) => {
+    const response = await JavaClient.put(
+        `api/owners/properties/${id}/disable`,
+        {
+            actor: 'owner',
+        }
+    )
+    return response.data
+}
+
+// Enable a property as an owner
+export const enableProperty = async (id: string) => {
+    const response = await JavaClient.put(
+        `api/owners/properties/${id}/enable`,
+        {
+            actor: 'owner',
+        }
+    )
+    return response.data
+}
+
+// Request reservation cancel as a guest
+export const requestCancelReservation = async (id: string) => {
+    const response = await JavaClient.put(
+        `api/guests/reservations/${id}/cancel`,
+        {},
+        { actor: 'guest' }
+    )
+    return response.data
+}
+
+// Accept reservation cancel as an owner
+export const acceptCancelRequest = async (id: string) => {
+    const response = await JavaClient.put(
+        `api/owners/reservations/${id}/responseCancelRequest?response=accept`,
+        {},
+        { actor: 'owner' }
+    )
+    return response.data
+}
+
+// Reject reservation cancel as an owner
+export const rejectCancelRequest = async (id: string) => {
+    const response = await JavaClient.put(
+        `api/owners/reservations/${id}/responseCancelRequest?response=reject`,
+        {},
+        { actor: 'owner' }
+    )
+    return response.data
+}
+
+// Remove property created temporarily
+export const removeReservation = async (id: string) => {
+    const response = await JavaClient.delete(`api/reservation/${id}`, {
+        actor: 'guest',
     })
     return response.data
 }
@@ -64,7 +127,6 @@ const saveToken = (
     payload: TokenResponse,
     actor: 'guest' | 'owner' | 'admin'
 ) => {
-    const decodedPayload = jwt.decode(payload.token) as TokenPayload
     localStorage.setItem(`tokenFor${upper(actor)}`, payload.token)
     localStorage.setItem(`refreshTokenFor${upper(actor)}`, payload.refreshToken)
     dispatchEvent(
@@ -112,4 +174,26 @@ export const upper = (actor: 'guest' | 'owner' | 'admin'): string => {
         actor = 'guest'
     }
     return actor.charAt(0).toUpperCase() + actor.slice(1)
+}
+
+export type UserRegister = {
+    firstName: String,
+    lastName: String,
+    email: String,
+    username: String,
+    password: String,
+    idNumber: String,
+    phoneNumber: String
+}
+// Register logic    
+export const register = async (actor: String, UserRegister: UserRegister) => {
+    // Call the login API
+    const response = await JavaClient.post(`api/auth/register/${actor}`, UserRegister)
+    return response.data
+}
+// AuthEmail    
+export const authEmail = async (actor: String, id: String, code: String) => {
+    // Call the login API
+    const response = await JavaClient.post(`api/auth/verify/${actor}/${id}/${code}`);
+    return response.data
 }

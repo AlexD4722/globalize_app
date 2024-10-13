@@ -3,8 +3,11 @@ package com.project.booking_platform.service.database;
 import com.project.booking_platform.dto.property.PropertyDetailDTO;
 import com.project.booking_platform.dto.property.PropertySearchResultDTO;
 import com.project.booking_platform.model.*;
+import com.project.booking_platform.repository.PropertyCommonRuleRepository;
 import com.project.booking_platform.repository.PropertyRepository;
 import com.project.booking_platform.service.fileupload.FileStorageService;
+import com.project.booking_platform.utils.enums.Status;
+import com.project.booking_platform.utils.generate.RandomID;
 import org.modelmapper.ModelMapper;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -18,11 +21,13 @@ import java.util.List;
 public class PropertyService {
 
     private final PropertyRepository propertyRepository;
+    private final PropertyCommonRuleRepository propertyCommonRuleRepository;
     private final ModelMapper mapper;
     private final FileStorageService fileService;
 
-    public PropertyService(PropertyRepository propertyRepository, ModelMapper mapper, FileStorageService fileService) {
+    public PropertyService(PropertyRepository propertyRepository, PropertyCommonRuleRepository propertyCommonRuleRepository, ModelMapper mapper, FileStorageService fileService) {
         this.propertyRepository = propertyRepository;
+        this.propertyCommonRuleRepository = propertyCommonRuleRepository;
         this.mapper = mapper;
         this.fileService = fileService;
     }
@@ -47,9 +52,10 @@ public class PropertyService {
         dto.setMinPrice(property.getRooms().stream().map(Room::getPrice).min(Float::compareTo).orElse(0f));
         dto.setReviews(comments);
         String pictureFolder = "property/" + property.getPicture();
+        String api = "api/files/" + pictureFolder;
         String featuredFolder = pictureFolder + "/feature/";
-        dto.setFeatured_picture(featuredFolder + fileService.getFileNames(featuredFolder).stream().findFirst().orElse(null));
-        dto.setPictures(fileService.getFileNames(pictureFolder).stream().map(p -> pictureFolder + "/" + p).toList());
+        dto.setFeatured_picture(api + "/feature/" + fileService.getFileNames(featuredFolder).stream().findFirst().orElse(null));
+        dto.setPictures(fileService.getFileNames(pictureFolder).stream().map(p -> api + "/" + p).toList());
         return dto;
     }
 
@@ -72,7 +78,8 @@ public class PropertyService {
             var dto = mapper.map(p, PropertySearchResultDTO.class);
             List<Room> rooms = p.getRooms();
             String featuredFolder = "property/" + p.getPicture() + "/feature/";
-            String picture = featuredFolder + fileService.getFileNames(featuredFolder).stream().findFirst().orElse(null);
+            String api = "api/files/" + featuredFolder;
+            String picture = api + fileService.getFileNames(featuredFolder).stream().findFirst().orElse(null);
             dto.setFeatured_picture(picture);
             dto.setMinPrice(rooms.stream().map(Room::getPrice).min(Float::compareTo).orElse(0f));
             dto.setAvgRating(rooms.stream().flatMap(r -> r.getReservations().stream()).flatMap(r -> r.getComments().stream()).mapToInt(Comment::getRating).average().orElse(0));
@@ -87,11 +94,37 @@ public class PropertyService {
         return list;
     }
 
-    public Property saveProperty(Property property) {
+    public Property saveNewProperty(Property property) {
+        property.setId(RandomID.generateRandomID());
         return propertyRepository.save(property);
+    }
+
+    public Property updateProperty(Property property) {
+        return propertyRepository.save(property);
+    }
+
+    public PropertyCommonRule saveCommonRules(PropertyCommonRule commonRules) {
+        commonRules.setId(RandomID.generateRandomID());
+        return propertyCommonRuleRepository.save(commonRules);
     }
 
     public void deleteProperty(String id) {
         propertyRepository.deleteById(id);
+    }
+
+    public void disableProperty(String id) {
+        Property property = propertyRepository.findById(id).orElse(null);
+        if (property != null) {
+            property.setStatus(Status.DISABLED);
+            propertyRepository.save(property);
+        }
+    }
+
+    public void enableProperty(String id) {
+        Property property = propertyRepository.findById(id).orElse(null);
+        if (property != null) {
+            property.setStatus(Status.ACTIVE);
+            propertyRepository.save(property);
+        }
     }
 }

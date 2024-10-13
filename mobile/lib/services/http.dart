@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
+import '../models/signUpRequest.dart';
 import '../utils/format.dart';
 
 class DataClient {
@@ -27,8 +28,8 @@ class DataClient {
     });
   }
 
-  static Future<Response> getReservations() {
-    var url = '$javaClientUrl/api/guests/reservations';
+  static Future<Response> getReservations(String status) {
+    var url = '$javaClientUrl/api/guests/reservations/$status';
     return dio.get(url);
   }
 
@@ -61,7 +62,6 @@ class DataClient {
       if (facility != null) 'facility': facility,
       if (roomType != null) 'roomType': roomType,
     };
-    print(" queryParameters $queryParameters");
     return Dio().get(url, queryParameters: queryParameters, options: options);
   }
 
@@ -77,8 +77,6 @@ class DataClient {
       'from': convertDateFormat(from),
       'to': convertDateFormat(to),
     };
-    print(from);
-    print(to);
     return dio.get(url, queryParameters: queryParameters);
   }
 
@@ -87,5 +85,22 @@ class DataClient {
     return dio.post(url, data: {
       'reservations': reservations,
     });
+  }
+
+  static Future<Response> requestCancelReservation(String id) {
+    final url = '$javaClientUrl/api/guests/reservations/$id/cancel';
+    return dio.put(url);
+  }
+  static Future<Response> register(SignUpRequest signUpRequest) {
+    const url = '$javaClientUrl/api/auth/register/guest';
+    return dio.post(url, data: signUpRequest.toJson());
+  }
+  static Future<Response> authAccount(String actor, String id, String code) {
+    final url = '$javaClientUrl/api/auth/verify/$actor/$id/$code';
+    return dio.post(url);
+  }
+  static Future<Response> getProfile(String actor, String id, String code) {
+    final url = '$javaClientUrl/api/guests/profile';
+    return dio.get(url);
   }
 }

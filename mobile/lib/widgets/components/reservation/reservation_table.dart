@@ -16,10 +16,28 @@ class ReservationTable extends StatefulWidget {
 }
 
 class _ReservationTableState extends State<ReservationTable> {
-  late Future<List<ItemReservation>> _futureItems;
-  Future<List<ItemReservation>> fetchData() async {
+  late Future<List<ItemReservation>> _futureActiveItems;
+  late Future<List<ItemReservation>> _futurePaidItems;
+  late Future<List<ItemReservation>> _futureCanceledItems;
+  late Future<List<ItemReservation>> _futureCanceledRequestItems;
+  Future<List<ItemReservation>> fetchActiveData() async {
+    return fetchData("active");
+  }
+  Future<List<ItemReservation>> fetchPaidData() async {
+    return fetchData("completed");
+  }
+  Future<List<ItemReservation>> fetchCanceledData() async {
+    return fetchData("cancelled");
+  }
+  Future<List<ItemReservation>> fetchCanceledRequestData() async {
+    return fetchData("requested");
+  }
+
+
+
+  Future<List<ItemReservation>> fetchData(String status) async {
     try {
-      final response = await DataClient.getReservations();
+      final response = await DataClient.getReservations(status);
       if (response.data != null && response.data.isNotEmpty) {
         return (response.data as List)
             .map((item) => ItemReservation.fromJson(item))
@@ -41,7 +59,10 @@ class _ReservationTableState extends State<ReservationTable> {
   @override
   void initState() {
     super.initState();
-    _futureItems = fetchData();
+    _futureActiveItems = fetchActiveData();
+    _futurePaidItems = fetchPaidData();
+    _futureCanceledItems = fetchCanceledData();
+    _futureCanceledRequestItems = fetchCanceledRequestData();
   }
 
   final CarouselController _carouselController = CarouselController();
@@ -63,32 +84,42 @@ class _ReservationTableState extends State<ReservationTable> {
           widget: Container(
               width: double.infinity,
               height: double.infinity,
-              child: ReservationActive(items: _futureItems))
+              child: ReservationActive(items: _futureActiveItems))
       ),
       CarouselReservation(
         title: 'Paid',
           widget: Container(
               width: double.infinity,
               height: double.infinity,
-              child: ReservationActive(items: _futureItems))
+              child: ReservationActive(items: _futurePaidItems))
       ),
       CarouselReservation(
         title: 'Canceled',
           widget: Container(
               width: double.infinity,
               height: double.infinity,
-              child: ReservationActive(items: _futureItems))
+              child: ReservationActive(items: _futureCanceledItems))
+      ),
+      CarouselReservation(
+          title: 'Cancel Requested',
+          widget: Container(
+              width: double.infinity,
+              height: double.infinity,
+              child: ReservationActive(items: _futureCanceledRequestItems))
       ),
     ];
     return Column(
       children: [
         Container(
           padding: const EdgeInsets.only(top: 16.0, bottom: 16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: listCarouselSlider.map((item) {
-              var index = listCarouselSlider.indexOf(item);
-              return Expanded(
+          height: 100, // Define a height for the container
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: listCarouselSlider.length,
+            itemBuilder: (context, index) {
+              var item = listCarouselSlider[index];
+              return Container(
+                width: item.title == "Cancel Requested"  ?  null : MediaQuery.of(context).size.width / (listCarouselSlider.length-1) ,
                 child: ButtonAppbarBody(
                   title: item.title,
                   buttonIndex: index,
@@ -96,7 +127,7 @@ class _ReservationTableState extends State<ReservationTable> {
                   onButtonPressed: _onButtonPressed,
                 ),
               );
-            }).toList(),
+            },
           ),
         ),
         Expanded(

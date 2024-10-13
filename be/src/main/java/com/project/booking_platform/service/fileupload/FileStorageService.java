@@ -1,10 +1,13 @@
 package com.project.booking_platform.service.fileupload;
 
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -45,8 +48,14 @@ public class FileStorageService {
         }
     }
 
-    public String storePropertyPicture(MultipartFile file, String propertyId) {
-        return storeFile(file, "property/$$id$$" + propertyId);
+    // Store file in property image location
+    public String storePropertyPictures(MultipartFile file, String propertyId) {
+        return storeFile(file, "property/" + propertyId);
+    }
+
+    // Store file in property image feature location
+    public String storePropertyFeaturedPicture(MultipartFile file, String propertyId) {
+        return storeFile(file, "property/" + propertyId + "/feature");
     }
 
     // Get all files in a location
@@ -59,6 +68,21 @@ public class FileStorageService {
                     .toList();
         } catch (IOException e) {
             throw new RuntimeException("Failed to read stored files", e);
+        }
+    }
+
+    // Load file as resource
+    public Resource loadFileAsResource(String file) {
+        try {
+            Path filePath = this.fileLocation.resolve(file).normalize();
+            Resource resource = new UrlResource(filePath.toUri());
+            if (resource.exists()) {
+                return resource;
+            } else {
+                throw new RuntimeException("File not found " + file);
+            }
+        } catch (MalformedURLException ex) {
+            throw new RuntimeException("File not found " + file, ex);
         }
     }
 }

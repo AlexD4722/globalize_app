@@ -1,6 +1,9 @@
+import { ImageUpload } from "./form/images-upload"
+
 export type iImage = {
     src: string
     label: string
+    to: string
 }
 
 export type iGuest = {
@@ -16,6 +19,19 @@ export interface iSearch {
     guest: iGuest
 }
 
+export interface iCommonRules  {
+    id?: string
+    checkInTime?: string
+    checkOutTime?: string
+    cancelBeforeHour?: string
+    quietTimeFrom?: string
+    quietTimeTo?: string
+    miniumAllowedAge?: number
+    smokingAllowed?: boolean
+    partyAllowed?: boolean
+    petAllowed?: boolean
+}
+
 export interface iProperty {
     id: string
     name: string
@@ -26,24 +42,9 @@ export interface iProperty {
     ward: string
     featured_picture: string
     pictures: string[]
-    propertyCommonRules: {
-        id?: string
-        checkInTime?: string
-        checkOutTime?: string
-        cancelBeforeHour?: string
-        quietTimeFrom?: string
-        quietTimeTo?: string
-        miniumAllowedAge?: number
-        smokingAllowed?: boolean
-        partyAllowed?: boolean
-        petAllowed?: boolean
-    }
+    propertyCommonRules: iCommonRules
     featured_facilities: string[]
-    facilities: {
-        id: string
-        name: string
-        description: string
-    }[]
+    facilities: iFacility[]
     minPrice: number
     reviews: {
         id: number
@@ -53,12 +54,12 @@ export interface iProperty {
     avgRating: number
 }
 export type iBedRoomDetail = {
-    id: number
+    id?: number
     bedType: iBedType
     quantity: number
 }
 export type iBedType = {
-    id: number
+    id?: number
     name: string
     description: string
 }
@@ -75,7 +76,7 @@ export interface iRoom {
     maxGuest: number
     available?: number
     area: string
-    picture: string
+    picture: ImageUpload
     amenities: iAmenity[]
     bedrooms: iBedroom[]
 }
@@ -197,6 +198,13 @@ export interface iListing {
     addressSpecific: string
     locationGps: string
     picture: string
+    status: string
+}
+
+export interface iFacility {
+    id?: string
+    name: string
+    description?: string
 }
 
 export interface iListingDetails {
@@ -209,23 +217,8 @@ export interface iListingDetails {
     ward: string
     featured_picture: string
     pictures: string[]
-    facilities: {
-        id: string
-        name: string
-        description: string
-    }[]
-    propertyCommonRules: {
-        id?: string
-        checkInTime?: string
-        checkOutTime?: string
-        cancelBeforeHour?: string
-        quietTimeFrom?: string
-        quietTimeTo?: string
-        miniumAllowedAge?: number
-        smokingAllowed?: boolean
-        partyAllowed?: boolean
-        petAllowed?: boolean
-    }
+    facilities?: iFacility[]
+    propertyCommonRules: iCommonRules
     propertyRoom: iRoom[]
     reviews: iListingReview[]
     avgRating: number
@@ -235,4 +228,16 @@ export interface iListingReview {
     id: number
     rating: number
     content: string
+}
+
+export type createPropertyDto = {
+    commonRules: iCommonRules
+    coverImage: File
+    facilities: iFacility[]
+    images: File[]
+    address: string
+    description: string
+    name: string
+    type: string
+    rooms: iRoom[]
 }

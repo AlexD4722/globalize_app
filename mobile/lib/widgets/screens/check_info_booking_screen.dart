@@ -2,12 +2,10 @@ import 'package:booking_platform_app/data/property_detail.dart';
 import 'package:booking_platform_app/widgets/screens/ui/check_info_booking/body_info_booking.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../data/cart.dart';
 import '../../data/item_search.dart';
 import '../../providers/cart_order.dart';
 import '../../providers/search.dart';
-import '../../router/routers.dart';
 import '../../services/http.dart';
 import '../../services/stripe_service.dart';
 import '../../utils/calculate.dart';
@@ -238,7 +236,18 @@ class _CheckInfoBookingScreenState extends State<CheckInfoBookingScreen>
     return Consumer<CartOrder>(
       builder: (context, cartOrder, child) {
         _propertyCart = cartOrder.getCartByPropertyId(widget.property.id);
-
+        // Kiểm tra _propertyCart có null không
+        if (_propertyCart == null) {
+          return Scaffold(
+            appBar: AppBar(
+              backgroundColor: const Color(0xFFF43F5E),
+              title: const Text('Booking information'),
+            ),
+            body: Center(
+              child: const Text('No items in the cart'),
+            ),
+          );
+        }
         return Scaffold(
           appBar: AppBar(
             backgroundColor: const Color(0xFFF43F5E),
@@ -281,7 +290,7 @@ class _CheckInfoBookingScreenState extends State<CheckInfoBookingScreen>
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text(
-                        '10 percent advance payment of the booking',
+                        '25 percent advance payment of the booking',
                         style: TextStyle(
                           fontSize: 12,
                           color: Color(0xFF7B7B7B),
@@ -300,7 +309,7 @@ class _CheckInfoBookingScreenState extends State<CheckInfoBookingScreen>
                                 _propertyCart!.carts,
                                 parseDate(searchParams!.from),
                                 parseDate(searchParams.to)) *
-                                0.10).toInt()}',
+                                0.25)}',
                             style: const TextStyle(
                               fontSize: 16,
                               color: Colors.black,
@@ -335,7 +344,7 @@ class _CheckInfoBookingScreenState extends State<CheckInfoBookingScreen>
                                   _propertyCart!.carts,
                                   parseDate(searchParams!.from),
                                   parseDate(searchParams.to)) *
-                                  0.10).toInt(), context,
+                                  0.25), context,
                               reservations
                           );
                           // await confirmReservation(reservations);

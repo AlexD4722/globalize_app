@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:booking_platform_app/providers/root.dart';
+import 'package:booking_platform_app/widgets/components/app_bar/app_bar_profile.dart';
 import 'package:booking_platform_app/widgets/components/app_bar/app_bar_reservation.dart';
 import 'package:booking_platform_app/widgets/components/app_bar/app_bar_search.dart';
 import 'package:booking_platform_app/widgets/screens/searchscreen.dart';
@@ -27,7 +28,7 @@ class _BookingPageState extends State<BookingPage> {
   final HashMap<String, Widget> appBars =
       HashMap<String, Widget>.fromIterables(
           ['Search', 'Reservation', 'Profile', 'Test', 'Secret'],
-          [const AppBarSearch(), const AppBarReservation(), const Text('Profile'), const Text('Test'), const Text('Secret')]);
+          [const AppBarSearch(), const AppBarReservation(), const AppBarProfile(), const Text('Test'), const Text('Secret')]);
   final List<String> screenNames = ['Search', 'Reservation', 'Profile', 'Test', 'Secret'];
 
   @override

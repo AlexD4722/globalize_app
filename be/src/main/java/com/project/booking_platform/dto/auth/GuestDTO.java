@@ -16,5 +16,6 @@ public class GuestDTO {
     String email;
     String username;
     String phoneNumber;
+    String idNumber;
     Boolean isVerified;
 }

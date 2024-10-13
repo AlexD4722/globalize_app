@@ -7,6 +7,11 @@ export type listingProcessState = {
     currentStep?: string,
     propertyName?: string,
     propertyDescription?: string,
+    propertyLocation?: {
+        provinces: string;
+        districts: string;
+        wards: string;
+    },
     propertyAddress?: string,
     propertyType?: string,
     images?: ImageUpload[],
@@ -16,14 +21,15 @@ export type listingProcessState = {
     commonRules?: {
         checkInTime?: string
         checkOutTime?: string
-        cancelBeforeHour?: string
+        cancelBeforeDay?: string
         quietTimeFrom?: string
         quietTimeTo?: string
         miniumAllowedAge?: number
         smokingAllowed?: boolean
         partyAllowed?: boolean
         petAllowed?: boolean
-    }
+    },
+    refundPercentage?: number
 
 }
 

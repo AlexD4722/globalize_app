@@ -61,7 +61,6 @@ class PropertyCommonRules {
   final String id;
   final String checkInTime;
   final String checkOutTime;
-  final int cancelBeforeHour;
   final String quietTimeFrom;
   final String quietTimeTo;
   final int minimumAllowedAge;
@@ -73,7 +72,6 @@ class PropertyCommonRules {
     required this.id,
     required this.checkInTime,
     required this.checkOutTime,
-    required this.cancelBeforeHour,
     required this.quietTimeFrom,
     required this.quietTimeTo,
     required this.minimumAllowedAge,
@@ -87,7 +85,6 @@ class PropertyCommonRules {
       id: json['id'],
       checkInTime: json['checkInTime'],
       checkOutTime: json['checkOutTime'],
-      cancelBeforeHour: json['cancelBeforeHour'],
       quietTimeFrom: json['quietTimeFrom'],
       quietTimeTo: json['quietTimeTo'],
       minimumAllowedAge: json['minimumAllowedAge'],

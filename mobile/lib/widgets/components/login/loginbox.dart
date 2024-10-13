@@ -7,6 +7,8 @@ import 'package:booking_platform_app/widgets/screens/register_screen.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toastification/toastification.dart';
 
 import '../../../router/routers.dart';
 import '../../screens/payment_screen.dart';
@@ -16,6 +18,17 @@ class LoginBox extends StatefulWidget {
 
   @override
   _LoginState createState() => _LoginState();
+}
+
+Future<void> saveToken(String token) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setString('auth_token', token);
+}
+
+// Function to retrieve token
+Future<String?> getToken() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString('auth_token');
 }
 
 class _LoginState extends State<LoginBox> {
@@ -29,9 +42,21 @@ class _LoginState extends State<LoginBox> {
     super.dispose();
   }
 
+  Future<void> _checkToken() async {
+    String? token = await getToken();
+    if (token != null) {
+      DataClient.setAuthorization(token);
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const BookingPage()),
+          (route) => false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var setToken = context.read<RootProvider>().setTokensHolder;
+    // _checkToken();
     return Column(
       children: [
         Container(
@@ -75,8 +100,7 @@ class _LoginState extends State<LoginBox> {
                 SizedBox(
                   width: double.infinity,
                   child: TextButton(
-                      onPressed: () {
-                      },
+                      onPressed: () {},
                       child: const Align(
                         alignment: Alignment.centerRight,
                         child: Text(
@@ -87,8 +111,7 @@ class _LoginState extends State<LoginBox> {
                             color: Color(0xFFF43F5E),
                           ),
                         ),
-                      )
-                  ),
+                      )),
                 ),
                 Container(
                   height: 40,
@@ -106,11 +129,26 @@ class _LoginState extends State<LoginBox> {
                           var tokensHolder = TokensHolder.fromJson(token.data);
                           setToken(tokensHolder);
                           DataClient.setAuthorization(tokensHolder.token);
-                          await FirebaseMessaging.instance.setAutoInitEnabled(true);
+                          await FirebaseMessaging.instance
+                              .setAutoInitEnabled(true);
+                          await saveToken(tokensHolder.token);
+                          toastification.show(
+                            context: context,
+                            type: ToastificationType.success,
+                            title: Text('Login successful'),
+                            autoCloseDuration: const Duration(seconds: 3),
+                          );
                           Navigator.pushNamed(context, Routes.home);
                         } catch (e) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text("Login failed: $e")));
+                          toastification.show(
+                            context: context,
+                            type: ToastificationType.error,
+                            title: Text('Login failed'),
+                            description: Text('Please check your credentials and try again.'),
+                            autoCloseDuration: const Duration(seconds: 3),
+                          );
+                          // ScaffoldMessenger.of(context).showSnackBar(
+                          //     SnackBar(content: Text("Login failed: $e")));
                         }
                       },
                       child: const Center(
@@ -148,14 +186,15 @@ class _LoginState extends State<LoginBox> {
                     PageRouteBuilder(
                       settings: const RouteSettings(name: Routes.searchResults),
                       pageBuilder: (context, animation, secondaryAnimation) =>
-                      const RegisterScreen(),
-                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                          const RegisterScreen(),
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) {
                         const begin = Offset(1.0, 0.0);
                         const end = Offset.zero;
                         const curve = Curves.ease;
 
-                        var tween =
-                        Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                        var tween = Tween(begin: begin, end: end)
+                            .chain(CurveTween(curve: curve));
                         var offsetAnimation = animation.drive(tween);
 
                         return SlideTransition(
@@ -178,23 +217,6 @@ class _LoginState extends State<LoginBox> {
             ],
           ),
         ),
-        ElevatedButton(
-          onPressed: () {
-            Navigator.pushNamed(context, Routes.home);
-            List<String> getNavigatorStack(BuildContext context) {
-              List<String> routeNames = [];
-              Navigator.popUntil(context, (route) {
-                routeNames.add(route.settings.name ?? 'Unknown');
-                return true;
-              });
-              return routeNames;
-            }
-
-            List<String> stack = getNavigatorStack(context);
-            print('Navigator Stack: $stack');
-          },
-          child: const Text("Move to Home Page"),
-        )
       ],
     );
   }

@@ -1,5 +1,6 @@
 package com.project.booking_platform.service.database;
 
+import com.project.booking_platform.dto.property.OwnerPropertyDTO;
 import com.project.booking_platform.dto.property.PropertyDTO;
 import com.project.booking_platform.dto.reservation.ReservationDTO;
 import com.project.booking_platform.model.Owner;
@@ -33,12 +34,13 @@ public class OwnerService {
         return ownerRepository.findByUserNameAndPassword(userName, password);
     }
 
-    public List<PropertyDTO> getProperties(String userName) {
+    public List<OwnerPropertyDTO> getProperties(String userName) {
         return ownerRepository.findPropertiesByUserName(userName).stream()
                 .map(property -> {
-                    String featuredFolder = "property/" + property.getPicture() + "/feature/";
-                    property.setPicture(featuredFolder + fileService.getFileNames(featuredFolder).stream().findFirst().orElse(null));
-                    return modelMapper.map(property, PropertyDTO.class);
+                    String link = "api/files/property/" + property.getPicture() + "/feature/";
+                    String featuredFolder = "property/" + property.getPicture() + "/feature";
+                    property.setPicture(link + fileService.getFileNames(featuredFolder).stream().findFirst().orElse(null));
+                    return modelMapper.map(property, OwnerPropertyDTO.class);
                 })
                 .toList();
     }
@@ -47,25 +49,7 @@ public class OwnerService {
         propertyRepository.deleteById(propertyId);
     }
 
-    public List<ReservationDTO> getReservationsByUserNameAndStatus(String userName, Status status) {
-        var list =ownerRepository.findReservationsByUserNameAndStatus(userName, status);
-        return list.stream().map(this::convertToDto).toList();
-    }
-
-    public List<ReservationDTO> getReservationsByUserName(String userName) {
-        var list = ownerRepository.findReservationsByUsername(userName);
-        return list.stream().map(this::convertToDto).toList();
-    }
-
-    private ReservationDTO convertToDto(Reservation reservation) {
-        ReservationDTO dto = modelMapper.map(reservation, ReservationDTO.class);
-        dto.setPrice(String.valueOf(reservation.getRoom().getPrice()));
-        dto.setName(reservation.getRoom().getName());
-        dto.setDateCheckIn(reservation.getCheckInDate().toString());
-        dto.setDateCheckOut(reservation.getCheckOutDate().toString());
-        dto.setRoomPicture(reservation.getRoom().getPicture());
-        dto.setCapacity(reservation.getRoom().getMaxGuest());
-        dto.setStatus(reservation.getStatus().name());
-        return dto;
+    public Owner getOwner(String userName) {
+        return ownerRepository.findByUserName(userName).orElse(null);
     }
 }

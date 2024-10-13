@@ -2,23 +2,19 @@ package com.project.booking_platform.controller;
 
 import com.project.booking_platform.dto.property.PropertyDetailDTO;
 import com.project.booking_platform.dto.property.PropertySearchResultDTO;
-import com.project.booking_platform.dto.property.RoomDTO;
+import com.project.booking_platform.dto.room.RoomDTO;
 import com.project.booking_platform.model.Property;
 import com.project.booking_platform.service.database.PropertyService;
 import com.project.booking_platform.service.database.RoomService;
 import com.project.booking_platform.service.database.SearchOption;
-import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.cglib.core.Local;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -100,33 +96,25 @@ public class PropertyController {
 
             return ResponseEntity.ok(response);
         } catch (Exception ex) {
-            ex.printStackTrace();
             return ResponseEntity.status(500).build();
         }
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<Property> createProperty(Property p){
         try {
-            return ResponseEntity.ok(propertyService.saveProperty(p));
+            return ResponseEntity.ok(propertyService.saveNewProperty(p));
         } catch (Exception ex) {
             return ResponseEntity.status(500).build();
         }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Property> updateProperty(@PathVariable String id, Property p){
+    @PutMapping("/{id}/disable")
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity disableProperty(@PathVariable String id){
         try {
-            return ResponseEntity.ok(propertyService.saveProperty(p));
-        } catch (Exception ex) {
-            return ResponseEntity.status(500).build();
-        }
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity deleteProperty(@PathVariable String id){
-        try {
-            propertyService.deleteProperty(id);
+            propertyService.disableProperty(id);
             return ResponseEntity.noContent().build();
         } catch (Exception ex) {
             return ResponseEntity.status(500).build();

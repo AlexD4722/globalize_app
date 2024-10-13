@@ -2,8 +2,7 @@ package com.project.booking_platform.config;
 
 import com.project.booking_platform.dto.property.PropertyDetailDTO;
 import com.project.booking_platform.dto.property.PropertySearchResultDTO;
-import com.project.booking_platform.dto.property.RoomDTO;
-import com.project.booking_platform.dto.reservation.ReservationDTO;
+import com.project.booking_platform.dto.room.RoomDTO;
 import com.project.booking_platform.model.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;

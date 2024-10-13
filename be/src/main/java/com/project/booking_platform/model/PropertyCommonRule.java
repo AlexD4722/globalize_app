@@ -26,8 +26,6 @@ public class PropertyCommonRule {
     LocalTime checkInTime;
     @Column(name = "check_out_time", nullable = false)
     LocalTime checkOutTime;
-    @Column(name = "cancel_before_hour", nullable = false)
-    int cancelBeforeHour;
     @Column(name = "quiet_time_from", nullable = false)
     LocalTime quietTimeFrom;
     @Column(name = "quiet_time_to", nullable = false)
@@ -40,6 +38,8 @@ public class PropertyCommonRule {
     boolean isPetAllowed;
     @Column(name = "is_party_allowed", nullable = false)
     boolean isPartyAllowed;
+    @Column(name = "cancel_before_hour", nullable = false)
+    int cancelBeforeHour;
 
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.ORDINAL)

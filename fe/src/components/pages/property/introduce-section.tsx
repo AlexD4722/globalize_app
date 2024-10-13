@@ -42,8 +42,6 @@ export default function IntroduceSection ({...props} : IntroduceSectionProps) {
         document.getElementById("review-section")?.scrollIntoView({behavior: "smooth", block: 'start'})
     }
 
-    let modified_picture = pictures.map((pic) => JAVA_URL+'/'+pic);
-
     return (
         <>
         <div>
@@ -54,7 +52,7 @@ export default function IntroduceSection ({...props} : IntroduceSectionProps) {
                 "xs:flex-col"
             )}>
                 {/** Left Section - Images */}
-                <ImageSection featured_picture={`${JAVA_URL}/${featured_picture}`} pictures={modified_picture} name={name}/>
+                <ImageSection featured_picture={featured_picture} pictures={pictures} name={name}/>
 
                 {/** Right - Basic info */}
                 <div className={clsx(

@@ -55,6 +55,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen>
         facility: searchParamsValues['facility'],
         roomType: searchParamsValues['roomType'],
       );
+      print("response==========   $response.data ");
       if (response.data != null && response.data.isNotEmpty) {
         return (response.data as List)
             .map((item) => ItemSearch.fromJson(item))

@@ -7,7 +7,7 @@ import { StarRate, ThreeDotsFill } from "../svg";
 
 export type ImageUpload = {
     image: File;
-    url: string
+    url: string;
 }
 
 export type ImagesUploadProps = {
@@ -16,9 +16,10 @@ export type ImagesUploadProps = {
     coverImage: ImageUpload | undefined,
     setCoverImage: Dispatch<SetStateAction<ImageUpload | undefined>>,
     onChange?: () => void
+    sizeContainer?: string;
 }
 
-export default function ImagesUpload ({images, setImages, coverImage, setCoverImage, onChange} : ImagesUploadProps) {
+export default function ImagesUpload ({images, setImages, coverImage, setCoverImage, onChange, sizeContainer} : ImagesUploadProps) {
 
     const { register } = useFormContext();
     const inputRef = useRef<HTMLInputElement | null>();
@@ -26,7 +27,6 @@ export default function ImagesUpload ({images, setImages, coverImage, setCoverIm
     const handleUploadFile = (event: React.ChangeEvent<HTMLInputElement>) => {
         onChange && onChange();
         if(event.target.files && event.target.files.length > 0){
-            console.log(event.target.files);
 
             let tempImages = [];
 
@@ -71,7 +71,7 @@ export default function ImagesUpload ({images, setImages, coverImage, setCoverIm
     const { ref, ...rest } = register('imagesUpload', { onChange: handleUploadFile});
 
     return (
-        <div className={clsx("w-full min-h-[500px] border border-borderDefault rounded-xl bg-slate-100 p-10",
+        <div className={clsx(`w-full min-h-[${sizeContainer ? sizeContainer : '500px'}] border border-borderDefault rounded-xl bg-slate-100 p-10`,
             (!images || images?.length === 0) && "flex items-center justify-center"
         )}>
             <input type="file" 
